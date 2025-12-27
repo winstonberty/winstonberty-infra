@@ -1,0 +1,19 @@
+# Copy this file to terraform.tfvars and fill in the values
+# DO NOT commit terraform.tfvars to git
+
+# Hetzner Cloud API token
+# Get from: https://console.hetzner.cloud/projects/<project>/security/tokens
+hcloud_token = "your-hetzner-api-token"
+
+# Cloudflare API token
+# Get from: https://dash.cloudflare.com/profile/api-tokens
+# Needs Zone:Read, DNS:Edit permissions for winstonberty.dev
+cloudflare_api_token = "your-cloudflare-api-token"
+
+# Cloudflare Zone ID
+# Get from: Cloudflare dashboard > winstonberty.dev > Overview (right sidebar)
+cloudflare_zone_id = "your-zone-id"
+
+# SSH public key for server access
+# Usually ~/.ssh/id_ed25519.pub or ~/.ssh/id_rsa.pub
+ssh_public_key = "ssh-ed25519 AAAA..."

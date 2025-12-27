@@ -4,36 +4,66 @@ Terraform infrastructure for winstonberty.dev.
 
 ## Resources
 
-- **Hetzner**: CX22 VM (~$4/mo) running K3s
-- **Cloudflare**: DNS records for winstonberty.dev
-- **Spacelift**: GitOps for Terraform (free tier)
+- **Hetzner CX22**: 2 vCPU, 4GB RAM, 40GB disk (~$4/mo)
+- **K3s**: Lightweight Kubernetes (installed via cloud-init)
+- **Cloudflare DNS**: A records for domain
+- **Caddy**: Ingress with automatic TLS
 
 ## Structure
 
 ```
-├── hetzner/        # VM provisioning
-├── cloudflare/     # DNS records
-└── k3s/            # Cluster bootstrap
+├── terraform.tf          # Provider configuration
+├── variables.tf          # Input variables
+├── outputs.tf            # Output values
+├── hetzner.tf            # Server + firewall + SSH key
+├── cloudflare.tf         # DNS records
+├── k8s/                  # Kubernetes manifests
+│   ├── caddy.yaml        # Ingress controller
+│   ├── site.yaml         # Astro site deployment
+│   └── umami.yaml        # Analytics
+└── terraform.tfvars.example
 ```
 
-## Usage
+## Setup
+
+1. Copy `terraform.tfvars.example` to `terraform.tfvars`
+2. Fill in your API tokens and SSH key
+3. Run:
 
 ```bash
-# Initialize
 terraform init
-
-# Plan
 terraform plan
-
-# Apply
 terraform apply
 ```
 
-## Prerequisites
+4. After apply, SSH to server and deploy K8s manifests:
 
-- Hetzner API token
-- Cloudflare API token
-- Spacelift connected to this repo
+```bash
+ssh root@<server-ip>
+kubectl apply -f k8s/
+```
+
+## Getting API Tokens
+
+### Hetzner
+1. Go to https://console.hetzner.cloud
+2. Select your project → Security → API Tokens
+3. Generate a Read & Write token
+
+### Cloudflare
+1. Go to https://dash.cloudflare.com/profile/api-tokens
+2. Create token with:
+   - Zone:Read (for winstonberty.dev)
+   - DNS:Edit (for winstonberty.dev)
+3. Get Zone ID from dashboard → winstonberty.dev → Overview sidebar
+
+## Outputs
+
+After `terraform apply`:
+- `server_ipv4` - Server IP address
+- `ssh_command` - SSH command to connect
+- `site_url` - https://winstonberty.dev
+- `analytics_url` - https://analytics.winstonberty.dev
 
 ## Related
 
